@@ -5,14 +5,12 @@
 
   function PrimitiveMock(id, behindList) {
     this.id = id;
-    this.isBehind = function(primitive) {
-      return behindList.indexOf(primitive.id) > -1;
-    };
+    this.behindList = behindList;
   }
 
   // A sorting is a topological ordering if for every directed edge uv from
   // vertex u to vertex v, u comes before v in the ordering.
-  function toBeTopologicalOrdering() {
+  function toBeTopologicalOrdering(relationship) {
     var actual = this.actual, l = actual.length;
     var notText = this.isNot ? ' not' : '';
     this.message = function() {
@@ -23,7 +21,7 @@
     for (var i = 0; i < l; i++) {
       for (var j = 0; j < l; j++) {
         if (i === j) continue;
-        if (actual[i].isBehind(actual[j])) {
+        if (relationship(actual[i], actual[j])) {
           if (actual.indexOf(actual[j]) <= i) {
             return false;
           }
@@ -33,8 +31,8 @@
     return true;
   }
 
-  context(['hadron/lib/structures/PrimitiveGraph'], function(PrimitiveGraph) {
-    describe('PrimitiveGraph instances', function() {
+  context(['hadron/lib/structures/Graph'], function(Graph) {
+    describe('Graph instances', function() {
       var n2 = new PrimitiveMock(2, []),
           n3 = new PrimitiveMock(3, [8, 10]),
           n5 = new PrimitiveMock(5, [11]),
@@ -55,6 +53,11 @@
         10: {11: n11, 3: n3},
         11: {7: n7, 5: n5}
       };
+      
+      // Returns true if primitiveA is behind primitiveB
+      var isBehindRelationShip = function(primitiveA, primitiveB) {
+        return primitiveA.behindList.indexOf(primitiveB.id) > -1;
+      };
 
       beforeEach(function() {
         this.addMatchers({
@@ -63,17 +66,18 @@
       });
 
       it('when created, construct an adjacency matrix in `_graph`', function() {
-        var primitivesGraph = new PrimitiveGraph(primitives);
+        var primitivesGraph = new Graph(primitives, isBehindRelationShip);
 
         expect(primitivesGraph._graph).toEqual(expectedAdjacencyMatrix);
       });
 
       it('allows to obtain a topological sort, calling `sort()` method',
       function() {
-        var primitivesGraph = new PrimitiveGraph(primitives);
+        var primitivesGraph = new Graph(primitives, isBehindRelationShip);
         primitivesGraph.sort();
 
-        expect(primitivesGraph.primitives).toBeTopologicalOrdering();
+        expect(primitivesGraph.primitives)
+          .toBeTopologicalOrdering(isBehindRelationShip);
       });
     });
   });

@@ -3,23 +3,23 @@ define(function(require) {
 
   var S = require('hadron/scaffolding');
 
-  function PrimitiveGraph(primitives) {
+  function Graph(primitives, relationship) {
     S.theObject(this)
       .has('_graph', {})
     ;
     this.primitives = primitives;
-    this.buildGraph();
+    this.buildGraph(relationship);
   }
 
-  PrimitiveGraph.prototype.buildGraph = function() {
+  Graph.prototype.buildGraph = function(relationship) {
     var graph = this._graph,
         primitives = this.primitives, lastIndex = primitives.length - 1;
 
-    // XXX: the graph is stored as a reversed adjacency matrix
     for (var i = lastIndex, primitive; primitive = primitives[i]; i--) {
       for (var j = lastIndex, another; another = primitives[j]; j--) {
         if (j == i) continue;
-        if (another.isBehind(primitive)) {
+        // XXX: the graph is stored as a **reversed** adjacency matrix
+        if (relationship(another, primitive)) {
           if (!graph[primitive.id])
             graph[primitive.id] = {};
 
@@ -31,7 +31,7 @@ define(function(require) {
 
   // Based on http://en.wikipedia.org/wiki/Topological_sorting
   // depth first search algorithm
-  PrimitiveGraph.prototype.sort = function() {
+  Graph.prototype.sort = function() {
     var sorted = [],
         graph = this._graph,
         primitives = this.primitives,
@@ -60,5 +60,5 @@ define(function(require) {
     this.primitives = sorted;
   };
 
-  return PrimitiveGraph;
+  return Graph;
 });
