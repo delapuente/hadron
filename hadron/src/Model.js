@@ -54,6 +54,9 @@ define(function(require) {
     }
 
     // get submodules
+    // TODO: Consider applying getSubmodels() to the facet instead of model
+    // and passing the model as first parameter as already done with the main
+    // facet method.
     submodels = [];
     submodelsMethod = this[submodelsGetterName];
     if (T.isApplicable(submodelsMethod)) {

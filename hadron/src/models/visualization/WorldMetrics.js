@@ -9,6 +9,7 @@ define(function(require) {
   var metricCache = { };
 
   function WorldMetrics(cellSize) {
+    cellSize = cellSize || 100;
     if (!metricCache[cellSize]) {
 
       var PROJECTED_SIZE = cellSize * SCALATION_FACTOR,
@@ -35,9 +36,71 @@ define(function(require) {
     return metricCache[cellSize];
   }
 
+  // XXX: Directly assumes primitives are cuboids
+  WorldMetrics.prototype.getOverlapped = function(primitiveA, primitiveB) {
+    var X = 0, Y = 1, Z = 2;
+
+    var aBack = primitiveA.position,
+        aFront = [
+          aBack[X] + primitiveA.type.dimensions[X],
+          aBack[Y] + primitiveA.type.dimensions[Y],
+          aBack[Z] + primitiveA.type.dimensions[Z]
+        ],
+        bBack = primitiveB.position,
+        bFront = [
+          bBack[X] + primitiveB.type.dimensions[X],
+          bBack[Y] + primitiveB.type.dimensions[Y],
+          bBack[Z] + primitiveB.type.dimensions[Z]
+        ];
+
+    var overlapped = undefined;
+
+    if (
+      overlaps(
+       [aBack[X] - aFront[Z], aFront[X] - aBack[Z]],
+       [bBack[X] - bFront[Z], bFront[X] - bBack[Z]]
+      ) &&
+      overlaps(
+       [aBack[X] - aFront[Y], aFront[X] - aBack[Y]],
+       [bBack[X] - bFront[Y], bFront[X] - bBack[Y]]
+      ) &&
+      overlaps(
+       [-aFront[Z] + aBack[Y], -aBack[Z] + aFront[Y]],
+       [-bFront[Z] + bBack[Y], -bBack[Z] + bFront[Y]]
+      )
+    ) {
+      if (aFront[X] < bBack[X] ||
+          aFront[Z] < bBack[Z] ||
+          aFront[Y] < bBack[Y])
+      {
+        overlapped = primitiveA;
+      }
+
+      if (bFront[X] < aBack[X] ||
+          bFront[Z] < aBack[Z] ||
+          bFront[Y] < aBack[Y])
+      {
+        overlapped = primitiveB;
+      }
+    }
+
+    return overlapped;
+  };
+
+  function overlaps(intervalA, intervalB) {
+    return intervalA[1] >= intervalB[0] && intervalB[1] >= intervalA[0];
+  }
+
   WorldMetrics.prototype.getWorkSpaceCoordinates = function(cellPosition) {
     var x = cellPosition[0], z = cellPosition[1];
     return [(x - z) * this.H_RADIUS, (x + z) * this.V_RADIUS];
+  };
+
+  WorldMetrics.prototype.getProjection = function(mapCoordinate) {
+    var x = mapCoordinate[0],
+        y = mapCoordinate[1],
+        z = mapCoordinate[2];
+    return [x - z, -x / 2 - z / 2 + y];
   };
 
   WorldMetrics.prototype.getMapCoordinates = function(worldPosition) {

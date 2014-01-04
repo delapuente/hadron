@@ -136,7 +136,7 @@ define(function(require) {
     };
 
     // The clear stage is almost identical to the render stage.
-    function clear(model, renderSystem, interpolationValue) {
+    function clear(model, interpolationValue) {
       model.traverse('clear', 'getClearSubmodels', [interpolationValue]);
     };
 
