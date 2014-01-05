@@ -28,7 +28,7 @@ define(function(require) {
     return this;
   };
 
-  // TODO: Can we force to free the memory, not only the reference?
+  /* TODO: Can we force to free the memory, not only the reference? */
   GraphicSystem.prototype.destroyBuffer = function(name) {
     var existed = !!this._buffers[name];
     delete this._buffers[name];

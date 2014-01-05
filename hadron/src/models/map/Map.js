@@ -11,7 +11,7 @@ define(function(require) {
   }
   S.theClass(Map).inheritsFrom(Composite);
 
-  // TODO: What to dispatch here? Position on the map when Y = 0?
+  /* TODO: What to dispatch here? Position on the map when Y = 0? */
   Map.prototype.setPointer = function(coordinates, isClicking) {
 /*    var mapPosition = this.metrics.getMapCoordinates(coordinates);
 

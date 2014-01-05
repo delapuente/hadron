@@ -74,7 +74,7 @@ define(function(require) {
       }
     }
 
-    // The game step is based on article [Fix your timestep!][2]
+    // The game step is based on article [Fix your timestep!](http://gafferongames.com/game-physics/fix-your-timestep/)
     // by Glenn Fiedler.
     function gameStep(forcedSimulationTime) {
       var frameTime;
@@ -104,6 +104,11 @@ define(function(require) {
         accumulator += timeToSimulate;
         var dt = options.simulationDelta;
         while (accumulator >= dt) {
+          /*
+          TODO: Consider to make something similar for rendering:
+            Provide an `emit()` function as `newTask()`, then apply some
+            sorting, and finally run these rendering tasks.
+          */
           simulate(rootModel, t, dt, newTask);
           runSimulation();
           t += dt;

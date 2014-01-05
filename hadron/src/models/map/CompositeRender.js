@@ -7,15 +7,15 @@ define(function(require) {
       Graph = require('hadron/lib/structures/Graph'),
       WorldMetrics = require('hadron/models/visualization/WorldMetrics');
 
-  var gfx = require('hadron/gfx/GraphicSystem');
-
   function CompositeRender(composite) {
     Render.apply(this, arguments);
     composite.getRenderSubmodels = this.getRenderSubmodels;
-    composite.getPrimitives = this.getPrimitives;
   }
   S.theClass(CompositeRender).inheritsFrom(Render);
 
+  /* TODO: Can we use the Composite model to optimize the graph creation?
+  We can assert any node inside the same object always keep the 
+  relationships between them unaltered upon movement. */ 
   CompositeRender.prototype.getRenderSubmodels = function () {
     var primitives = this.getPrimitives();
     var primitiveGraph = new Graph(primitives, isBehind);
@@ -23,30 +23,6 @@ define(function(require) {
     primitiveGraph.sort();
     
     return primitiveGraph.primitives;
-  };
-
-  CompositeRender.prototype.getPrimitives = function () {
-    var primitiveInPlace, auxPrimitives, offset,
-        primitives = [];
-
-    for (var i = 0, object; object = this._objects[i]; i++) {
-      if (object.isPrimitive()) {
-        primitiveInPlace = Object.create(object);
-        primitives.push(primitiveInPlace); 
-      }
-      else {
-        auxPrimitives = object.type.getPrimitives();
-        offset = object.position;
-        for (var j = 0, primitive; primitive = auxPrimitives[j]; j++) {
-          primitive.position[0] += offset[0];
-          primitive.position[1] += offset[1];
-          primitive.position[2] += offset[2];
-          primitives.push(primitive);
-        }
-      }
-    }
-    
-    return primitives;
   };
 
   var isBehind(primitiveA, primitiveB) {
