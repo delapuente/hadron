@@ -9,7 +9,6 @@ define(function(require) {
 
   var S = require('hadron/scaffolding'),
       R = require('hadron/res/ResourceManager'),
-      Tile = require('hadron/models/map/tiling/Tile'),
       MapEditor = require('editors/MapEditor'),
       Game = require('hadron/Game');
 

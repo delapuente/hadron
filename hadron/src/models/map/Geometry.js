@@ -4,7 +4,7 @@ define(function(require) {
   var S = require('hadron/scaffolding'),
       SceneNode = require('hadron/models/map/SceneNode'),
       _Primitive = require('hadron/models/map/_Primitive'),
-      Render = require('hadron/models/map/geometries/GeometryRender');
+      Render = require('hadron/models/map/GeometryRender');
       
   function Geometry() {
     SceneNode.apply(this, arguments);

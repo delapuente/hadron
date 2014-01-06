@@ -7,11 +7,12 @@ define(function(require) {
   'use strict';
 
   var S = require('hadron/scaffolding'),
-      T = require('hadron/toolkit');
+      T = require('hadron/toolkit'),
+      WorldMetrics = require('hadron/models/visualization/WorldMetrics');
 
   function Drawer(context) {
     S.the(context)
-      .has(getIsoCube)
+      .has(drawCuboid)
       .has(setDimetricProjection);
 
     return context;
@@ -30,10 +31,17 @@ define(function(require) {
       faceColor: [237, 12, 70, 1]
     }, options || {});
 
-    var canvas = document.createElement('canvas'),
-        buffer = canvas.getContext('2d'),
-        points, colors;
+    var metrics, xyCoordinates;
 
+    metrics = new WorldMetrics();
+    xyCoordinates = metrics.getProjection(primitive.position);
+
+    this.save();
+    this.beginPath();
+    this.fillStyle = 'red';
+    this.arc(xyCoordinates[0], xyCoordinates[1], 10, 0, Math.PI * 2);
+    this.fill();
+    this.restore(); 
   }
 
   return Drawer;

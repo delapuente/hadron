@@ -7,9 +7,9 @@ define(function(require) {
   function _LocalObject(type, position, owner) {
     var wrapper = Object.create(type); 
     S.the(wrapper)
-      .has('position', [position[0], position[1], position[2]])
       .has('owner', owner)
     ;
+    wrapper.position = [position[0], position[1], position[2]];
     return wrapper;
   }
   

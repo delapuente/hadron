@@ -24,9 +24,10 @@ define(function(require) {
     
     return primitiveGraph.primitives;
   };
-
-  var isBehind(primitiveA, primitiveB) {
-    return WorldMetrics.getOverlapped(primitiveA, primitiveB) === primitiveA;
+  
+  var metrics = new WorldMetrics(100);
+  function isBehind(primitiveA, primitiveB) {
+    return metrics.getOverlapped(primitiveA, primitiveB) === primitiveA;
   }
 
   return CompositeRender;

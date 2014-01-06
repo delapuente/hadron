@@ -1,10 +1,10 @@
 (function() {
   'use strict';
 
-  function IsometricDrawerFake() { }
+  function DimetricDrawerFake() { }
 
   var context = newContext({
-    'hadron/gfx/IsometricDrawer': IsometricDrawerFake
+    'hadron/gfx/DimetricDrawer': DimetricDrawerFake
   });
   context(['hadron/gfx/GraphicSystem'], function(gfx) {
 
@@ -17,10 +17,10 @@
           expect(buffer.tagName).toBe('CANVAS');
         });
 
-        it('have an IsometricDrawer property `drawer`.', function() {
+        it('have a DimetricDrawer property `drawer`.', function() {
           var buffer = gfx.newBuffer('buffer', 100, 100);
           expect(buffer.drawer).toBeDefined();
-          expect(buffer.drawer.constructor).toBe(IsometricDrawerFake);
+          expect(buffer.drawer.constructor).toBe(DimetricDrawerFake);
         });
 
       });

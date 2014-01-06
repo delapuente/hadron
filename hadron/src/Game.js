@@ -79,7 +79,7 @@ define(function(require) {
     function gameStep(forcedSimulationTime) {
       var frameTime;
 
-      try {
+      //try {
         // Take the time now
         newTime = Date.now();
         currentTime === undefined && (currentTime = newTime);
@@ -124,14 +124,14 @@ define(function(require) {
         render(rootModel, interpolationValue);
 
         startTime = Date.now();
-      }
+//      }
 
       // On error, the game is paused and the stack is dumped into the console.
-      catch (error) {
+      /*catch (error) {
         pause();
         console.log(error.message + '\n' + error.stack);
         throw error;
-      }
+      }*/
     }
 
     // The render stage traverses the model passing the interpolation value

@@ -6,7 +6,9 @@ define(function(require) {
   var S = require('hadron/scaffolding'),
       Model = require('hadron/Model'),
       Simulator = require('hadron/Simulator'),
-      Tile = require('hadron/models/map/tiling/Tile'),
+      Textured = require('hadron/models/map/Textured'),
+      Cuboid = require('hadron/models/map/geometries/Cuboid'),
+      Composite = require('hadron/models/map/Composite'),
       Camera = require('hadron/models/visualization/Camera'),
       Scene = require('hadron/models/visualization/Scene'),
       MultiportWindow = require('hadron/models/visualization/MultiportWindow'),
@@ -53,26 +55,25 @@ define(function(require) {
   };
 
   MapEditor.prototype.doTestScenario = function(palette) {
-    var cell, tile, centerObject, throneCell;
+    // Make two geometries...
+    var wall = new Cuboid(300, 300, 100);
+    var ceiling = new Cuboid(300, 100, 600);
+  
+    // Make a cave with them
+    var cave = new Textured();
+    cave.addObject(wall, [0, 0, 0]);
+    cave.addObject(wall, [0, 0, 600]);
+    cave.addObject(ceiling, [0, 200, 100])
 
-    // Suelo
-   for (var x = -3; x <= 3; x++) {
-      for (var z = -3; z <= 3; z++) {
-        cell = this.target.map.getCell([x, z]);
-        cell.clearTiles();
-        // TODO: Replace by retrieving from Palette
-        tile = new Tile(DEFAULT_CELL_SIZE, palette.getSprite(1));
-        cell.tiles.push(tile);
-      }
-    }
+    // Make a large cave with the former one
+    var largeCave = new Composite();
+    largeCave.addObject(cave, [0, 0, 0]);
+    largeCave.addObject(cave, [300, 0, 0]);
 
-    centerObject = palette.getSprite(2);
-    if (centerObject) {
-      throneCell = this.target.map.getCell([0, 0]);
-      tile = new Tile(DEFAULT_CELL_SIZE, centerObject);
-      throneCell.tiles.push(tile);
-    }
-  }
+    // Add a large cave and a cave to the scene
+    this.target.map.addObject(largeCave, [0, 0, 0]);
+    this.target.map.addObject(cave, [0, 0, 900]);
+  };
 
   return MapEditor;
 });

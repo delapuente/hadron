@@ -42,15 +42,15 @@ define(function(require) {
 
     var aBack = primitiveA.position,
         aFront = [
-          aBack[X] + primitiveA.type.dimensions[X],
-          aBack[Y] + primitiveA.type.dimensions[Y],
-          aBack[Z] + primitiveA.type.dimensions[Z]
+          aBack[X] + primitiveA.dimensions[X],
+          aBack[Y] + primitiveA.dimensions[Y],
+          aBack[Z] + primitiveA.dimensions[Z]
         ],
         bBack = primitiveB.position,
         bFront = [
-          bBack[X] + primitiveB.type.dimensions[X],
-          bBack[Y] + primitiveB.type.dimensions[Y],
-          bBack[Z] + primitiveB.type.dimensions[Z]
+          bBack[X] + primitiveB.dimensions[X],
+          bBack[Y] + primitiveB.dimensions[Y],
+          bBack[Z] + primitiveB.dimensions[Z]
         ];
 
     var overlapped = undefined;

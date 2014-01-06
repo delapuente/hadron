@@ -2,7 +2,7 @@ define(function(require) {
   'use strict';
 
   var S = require('hadron/scaffolding'),
-      Drawer = require('hadron/gfx/IsometricDrawer');
+      Drawer = require('hadron/gfx/DimetricDrawer');
 
   function GraphicSystem() {
     S.theObject(this).has('_buffers', {});
