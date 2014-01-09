@@ -4,7 +4,9 @@ define(function(require) {
   var S = require('hadron/scaffolding');
 
   var DIMETRIC_ANGLE = Math.atan(0.5),
-      SCALATION_FACTOR = Math.sqrt(10) / 4;
+      SCALATION_FACTOR = Math.sqrt(10) / 4,
+      SIN = Math.sin(DIMETRIC_ANGLE),
+      COS = Math.cos(DIMETRIC_ANGLE);
 
   var metricCache = { };
 
@@ -13,8 +15,6 @@ define(function(require) {
     if (!metricCache[cellSize]) {
 
       var PROJECTED_SIZE = cellSize * SCALATION_FACTOR,
-          SIN = Math.sin(DIMETRIC_ANGLE),
-          COS = Math.cos(DIMETRIC_ANGLE),
           H_RADIUS = Math.cos(DIMETRIC_ANGLE) * PROJECTED_SIZE,
           V_RADIUS = Math.sin(DIMETRIC_ANGLE) * PROJECTED_SIZE,
           X_AXIS = [H_RADIUS, V_RADIUS],
@@ -104,7 +104,7 @@ define(function(require) {
     var x = mapCoordinate[0],
         y = mapCoordinate[1],
         z = mapCoordinate[2];
-    return [x - z, x / 2 + z / 2 - y];
+    return [this.COS * this.SCALATION_FACTOR * (x - z), this.SIN * this.SCALATION_FACTOR * (x + z) - y];
   };
 
   WorldMetrics.prototype.getMapCoordinates = function(worldPosition) {
