@@ -21,8 +21,7 @@ define(function(require) {
     var primitiveGraph = new Graph(primitives, isBehind);
     
     primitiveGraph.sort();
-    
-    return primitiveGraph.primitives;
+    return primitiveGraph.nodes;
   };
   
   var metrics = new WorldMetrics(100);

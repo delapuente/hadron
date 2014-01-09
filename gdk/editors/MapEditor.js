@@ -62,8 +62,8 @@ define(function(require) {
     // Make a cave with them
     var cave = new Textured();
     cave.addObject(wall, [0, 0, 0]);
-    cave.addObject(wall, [0, 0, 600]);
-    cave.addObject(ceiling, [0, 200, 100])
+    cave.addObject(ceiling, [0, 200, 100]);
+    cave.addObject(wall, [0, 0, 700]);
 
     // Make a large cave with the former one
     var largeCave = new Composite();
@@ -72,7 +72,12 @@ define(function(require) {
 
     // Add a large cave and a cave to the scene
     this.target.map.addObject(largeCave, [0, 0, 0]);
-    this.target.map.addObject(cave, [0, 0, 900]);
+    this.target.map.addObject(cave, [0, 0, 1000]);
+    /*var s = new Textured(), t = new Textured();
+    t.addObject(new Cuboid(100, 100, 100), [0, 0, 0]);
+    s.addObject(new Cuboid(100, 100, 100), [0, 0, 0]);
+    this.target.map.addObject(t, [0, 0, 100]);
+    this.target.map.addObject(s, [100, 0, 100]);*/
   };
 
   return MapEditor;

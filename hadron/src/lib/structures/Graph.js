@@ -3,27 +3,26 @@ define(function(require) {
 
   var S = require('hadron/scaffolding');
 
-  function Graph(primitives, relationship) {
+  function Graph(nodes, relationship) {
     S.theObject(this)
       .has('_graph', {})
     ;
-    this.primitives = primitives;
+    this.nodes = nodes;
     this.buildGraph(relationship);
   }
 
   Graph.prototype.buildGraph = function(relationship) {
     var graph = this._graph,
-        primitives = this.primitives, lastIndex = primitives.length - 1;
+        nodes = this.nodes, lastIndex = nodes.length - 1;
 
-    for (var i = lastIndex, primitive; primitive = primitives[i]; i--) {
-      for (var j = lastIndex, another; another = primitives[j]; j--) {
+    for (var i = lastIndex, node; node = nodes[i]; i--) {
+      for (var j = lastIndex, another; another = nodes[j]; j--) {
         if (j == i) continue;
-        // XXX: the graph is stored as a **reversed** adjacency matrix
-        if (relationship(another, primitive)) {
-          if (!graph[primitive.id])
-            graph[primitive.id] = {};
-
-          graph[primitive.id][another.id] = another;
+        if (relationship(node, another)) {
+          if (!graph[node.id]) {
+            graph[node.id] = {};
+          }
+          graph[node.id][another.id] = another;
         }
       }
     }
@@ -32,32 +31,38 @@ define(function(require) {
   // Based on http://en.wikipedia.org/wiki/Topological_sorting
   // depth first search algorithm
   Graph.prototype.sort = function() {
-    var sorted = [],
+    var sorted = new Array(this.nodes.length),
         graph = this._graph,
-        primitives = this.primitives,
-        lastIndex = primitives.length - 1;
+        nodes = this.nodes,
+        lastIndex = nodes.length - 1,
+        resultIndex = lastIndex;
 
-    for (var i = lastIndex, primitive; primitive = primitives[i]; i--) {
-      primitive.__visited__ = false;
+    for (var i = lastIndex, node; node = nodes[i]; i--) {
+      node.__visited__ = false;
     }
 
-    for (var i = lastIndex, primitive; primitive = primitives[i]; i--) {
-      if (primitive.__visited__) continue;
-      visit(primitive);
+    for (var i = lastIndex, node; node = nodes[i]; i--) {
+      if (node.__visited__) continue;
+      visit(node);
     }
 
-    function visit(primitive) {
-      if (!primitive.__visited__) {
-        primitive.__visited__ = 'inprogress'; // XXX: not used at the moment
-        for (var adjacent in graph[primitive.id]) {
-          visit(graph[primitive.id][adjacent]);
+    function visit(node) {
+      if (node.__visited__ === 'inprogress') {
+        throw new Error('Impossible to compute a topological sort because ' +
+                        JSON.stringify(node) + ' has been already visited in' +
+                        nodes);
+      }
+      if (!node.__visited__) {
+        node.__visited__ = 'inprogress'; // XXX: not used at the moment
+        for (var adjacentId in graph[node.id]) {
+          visit(graph[node.id][adjacentId]);
         }
-        sorted.push(primitive)
-        primitive.__visited__ = true;
+        node.__visited__ = true;
+        sorted[resultIndex--] = node;
       }
     }
 
-    this.primitives = sorted;
+    this.nodes = sorted;
   };
 
   return Graph;

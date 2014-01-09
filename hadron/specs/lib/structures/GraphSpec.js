@@ -3,9 +3,9 @@
 
   var context = newContext();
 
-  function PrimitiveMock(id, behindList) {
+  function PrimitiveMock(id, ocludders) {
     this.id = id;
-    this.behindList = behindList;
+    this.ocludders = ocludders;
   }
 
   // A sorting is a topological ordering if for every directed edge uv from
@@ -56,7 +56,7 @@
       
       // Returns true if primitiveA is behind primitiveB
       var isBehindRelationShip = function(primitiveA, primitiveB) {
-        return primitiveA.behindList.indexOf(primitiveB.id) > -1;
+        return primitiveA.ocludders.indexOf(primitiveB.id) > -1;
       };
 
       beforeEach(function() {
@@ -76,7 +76,7 @@
         var primitivesGraph = new Graph(primitives, isBehindRelationShip);
         primitivesGraph.sort();
 
-        expect(primitivesGraph.primitives)
+        expect(primitivesGraph.nodes)
           .toBeTopologicalOrdering(isBehindRelationShip);
       });
     });

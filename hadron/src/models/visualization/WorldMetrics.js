@@ -13,6 +13,8 @@ define(function(require) {
     if (!metricCache[cellSize]) {
 
       var PROJECTED_SIZE = cellSize * SCALATION_FACTOR,
+          SIN = Math.sin(DIMETRIC_ANGLE),
+          COS = Math.cos(DIMETRIC_ANGLE),
           H_RADIUS = Math.cos(DIMETRIC_ANGLE) * PROJECTED_SIZE,
           V_RADIUS = Math.sin(DIMETRIC_ANGLE) * PROJECTED_SIZE,
           X_AXIS = [H_RADIUS, V_RADIUS],
@@ -20,6 +22,8 @@ define(function(require) {
 
       S.theObject(this)
         .has('DIMETRIC_ANGLE', DIMETRIC_ANGLE)
+        .has('SIN', SIN)
+        .has('COS', COS)
         .has('SCALATION_FACTOR', SCALATION_FACTOR)
         .has('CELL_SIZE', cellSize)
         .has('H_RADIUS', H_RADIUS)
@@ -61,12 +65,12 @@ define(function(require) {
        [bBack[X] - bFront[Z], bFront[X] - bBack[Z]]
       ) &&
       overlaps(
-       [aBack[X] - aFront[Y], aFront[X] - aBack[Y]],
-       [bBack[X] - bFront[Y], bFront[X] - bBack[Y]]
+       [aBack[X] + aFront[Y], aFront[X] + aBack[Y]],
+       [bBack[X] + bFront[Y], bFront[X] + bBack[Y]]
       ) &&
       overlaps(
-       [-aFront[Z] + aBack[Y], -aBack[Z] + aFront[Y]],
-       [-bFront[Z] + bBack[Y], -bBack[Z] + bFront[Y]]
+       [-aFront[Z] - aBack[Y], -aBack[Z] - aFront[Y]],
+       [-bFront[Z] - bBack[Y], -bBack[Z] - bFront[Y]]
       )
     ) {
       if (aFront[X] < bBack[X] ||
@@ -100,7 +104,7 @@ define(function(require) {
     var x = mapCoordinate[0],
         y = mapCoordinate[1],
         z = mapCoordinate[2];
-    return [x - z, -x / 2 - z / 2 + y];
+    return [x - z, x / 2 + z / 2 - y];
   };
 
   WorldMetrics.prototype.getMapCoordinates = function(worldPosition) {
