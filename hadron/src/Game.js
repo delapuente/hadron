@@ -23,7 +23,7 @@ define(function(require) {
 
     checkOptions(customOptions);
 
-    var runningGameId = null,
+    var isRunning = false,
         options = getCustomizedOptions(customOptions),
         rootModel = options.rootModel;
 
@@ -35,7 +35,7 @@ define(function(require) {
 
     // `start()` reset the simulation from the beginning.
     function start() {
-      if (!runningGameId) {
+      if (!isRunning) {
         reset();
         resume();
       }
@@ -54,22 +54,22 @@ define(function(require) {
     // `pause()` freezes the simulation, clearing the interval of the game step.
     function pause() {
       pauseTime = Date.now();
-      clearInterval(runningGameId);
-      runningGameId = null;
+      isRunning = false;
     }
 
     // `resume()` continues with the game, programming a new interval for the
     // game step.
     function resume() {
-      if (!runningGameId) {
-        runningGameId = setInterval(gameStep, 0);
+      if (!isRunning) {
+        requestAnimationFrame(gameStep);
+        isRunning = true;
       }
     }
 
     // `step()` performs **one, and only one** game step.
     function step(timeToSimulate) {
       timeToSimulate = timeToSimulate || options.simulationDelta;
-      if (!runningGameId) {
+      if (!isRunning) {
         gameStep();
       }
     }
@@ -78,6 +78,8 @@ define(function(require) {
     // by Glenn Fiedler.
     function gameStep(forcedSimulationTime) {
       var frameTime;
+
+      isRunning && requestAnimationFrame(gameStep);
 
       //try {
         // Take the time now
