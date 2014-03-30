@@ -106,9 +106,7 @@ define(function(require) {
     event.type = type;
     event.target = this;
     listeners.forEach(function onCallback(callback) {
-      setTimeout(function doCallback() {
-        callback.call(null, event);
-      });
+      callback(event);
     });
   };
 
