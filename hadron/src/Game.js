@@ -101,10 +101,11 @@ define(function(require) {
           options.maxSimulationTime
         );
 
-        // Simulate in chunks. Keeping the accumulator updated we can maintain
-        // a regular rate of simulation.
+        // Simulate in higher precission chunks unless the feature is
+        // disabled (simulationDelta set to 0). Keeping the accumulator updated
+        // we can maintain a regular rate of simulation.
         accumulator += timeToSimulate;
-        var dt = options.simulationDelta;
+        var dt = options.simulationDelta || accumulator;
         while (accumulator >= dt) {
           /*
           TODO: Consider to make something similar for rendering:
