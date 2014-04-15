@@ -63,6 +63,14 @@ define(function(require) {
         klass.prototype = Object.create(base.prototype);
         klass.prototype.constructor = klass;
         return this;
+      },
+
+      mix: function (other) {
+        var mixin = other.prototype;
+        for (var property in mixin) if (mixin.hasOwnProperty(property)) {
+          klass.prototype[property] = mixin[property];
+        }
+        return this;
       }
     };
   }

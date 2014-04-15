@@ -76,7 +76,7 @@ define(function(require) {
 
     // The game step is based on article [Fix your timestep!](http://gafferongames.com/game-physics/fix-your-timestep/)
     // by Glenn Fiedler.
-    function gameStep(forcedSimulationTime) {
+    function gameStep(requestAnimationTime, forcedSimulationTime) {
       var frameTime;
 
       isRunning && requestAnimationFrame(gameStep);
@@ -84,7 +84,7 @@ define(function(require) {
       //try {
         // Take the time now
         newTime = Date.now();
-        currentTime === undefined && (currentTime = newTime);
+        (currentTime === undefined) && (currentTime = newTime);
 
         // Calculates frame time
         frameTime = newTime - currentTime;

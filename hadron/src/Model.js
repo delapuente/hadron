@@ -102,31 +102,49 @@ define(function(require) {
   };
 
   Model.prototype.runListeners = function(type, event) {
-    var listeners = this._listeners[type] || [];
+    var listeners = this._listeners[type] || [],
+        newListeners = [];
+
     event.type = type;
     event.target = this;
-    listeners.forEach(function onCallback(callback) {
+    listeners.forEach(function onCallback(pair) {
+      var callback = pair[0];
+      var once = pair[1];
       callback(event);
+      if (!once) { newListeners.push(pair); }
     });
+    this._listeners[type] = newListeners;
   };
 
-  Model.prototype.addEventListener = function(type, callback) {
+  Model.prototype.addEventListener = function(type, callback, once) {
     var listeners = this._listeners,
-        typeListeners = listeners[type] = listeners[type] || [];
+        typeListeners = listeners[type] = (listeners[type] || []);
 
-    if (typeListeners.indexOf(callback) === -1) {
-      typeListeners.push(callback);
+    if (!typeListeners.some(alreadyListening)) {
+      typeListeners.push([callback, once]);
     }
+
+    function alreadyListening(pair) {
+      return pair[0] === callback;
+    };
   };
 
   Model.prototype.removeEventListener = function(type, callback) {
     var listeners = this._listeners,
         typeListeners = listeners[type] = listeners[type] || [],
-        position = typeListeners.indexOf(callback);
+        position = -1;
+
+    for (var l = 0, pair; (pair = typeListeners[l]) && position < 0; l++) {
+      if (pair[0] === callback) { position = l; }
+    }
 
     if (position !== -1) {
       listeners[type].splice(position, 1);
     }
+  };
+
+  Model.prototype.removeAllEventListener = function (type) {
+    this._listeners[type] = [];
   };
 
   return Model;

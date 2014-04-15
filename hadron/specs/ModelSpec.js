@@ -80,7 +80,7 @@
 
           expect(model._listeners['anytype']).toBeDefined();
           expect(model._listeners['anytype'].length).toEqual(1);
-          expect(model._listeners['anytype'][0]).toBe(callback);
+          expect(model._listeners['anytype'][0][0]).toBe(callback);
         });
 
         it('allow to remove a callback.', function() {
@@ -102,26 +102,30 @@
           function callback(evt) { receivedEvent = event; }
           model.addEventListener('anytype', callback);
 
-          runs(function() {
-            model.dispatchEvent('anytype', event);
-          });
+          model.dispatchEvent('anytype', event);
 
-          waitsFor(function() {
-            return receivedEvent;
-          }, 'callback to be called.', 100);
-
-          runs(function() {
-            expect(receivedEvent).toBe(event);
-            expect(receivedEvent.type).toBe('anytype');
-            expect(receivedEvent.target).toBe(model);
-            expect(receivedEvent.details).toBe(event.details);
-          });
-
+          expect(receivedEvent).toBe(event);
+          expect(receivedEvent.type).toBe('anytype');
+          expect(receivedEvent.target).toBe(model);
+          expect(receivedEvent.details).toBe(event.details);
         });
 
+        it('allow to add callbacks for listening only once.', function() {
+          var callCount = 0,
+              event = {},
+              model = new Model();
+
+          function callback(evt) { callCount++; }
+          model.addEventListener('anytype', callback, true);
+
+          model.dispatchEvent('anytype', event);
+          model.dispatchEvent('anytype', event);
+
+          expect(callCount).toBe(1);
+        });
       });
 
     });
   });
 
-}()); 
+}());
