@@ -1,14 +1,15 @@
-define(function(require) {
+define([
+  'hadron/toolkit',
+  'hadron/scaffolding',
+  'hadron/Render',
+  'hadron/Simulator',
+  'hadron/EventEmitter'
+], function(T, S, Render, Simulator, EventEmitter) {
   'use strict';
 
   var NEXT_ID = 1,
       IS_PRECALL = false,
       IS_POSTCALL = true;
-
-  var T = require('hadron/toolkit'),
-      S = require('hadron/scaffolding'),
-      Render = require('hadron/Render'),
-      Simulator = require('hadron/Simulator');
 
   function setupFacets(model, args) {
     var isAFacetConstructor, baseClass, facetPrototype, newFacet,
@@ -30,12 +31,15 @@ define(function(require) {
   }
 
   function Model() {
+    EventEmitter.apply(this);
     S.theObject(this)
       .has('id', NEXT_ID++)
-      .has('_listeners', {})
     ;
+
+    // Facets must be the last thing to do
     setupFacets(this, [].slice.call(arguments, 0));
   }
+  S.theClass(Model).mix(EventEmitter);
 
   Model.prototype.traverse =
   function(methodName, submodelsGetterName, methodArgs) {
@@ -64,9 +68,10 @@ define(function(require) {
     }
 
     // traverse submodules
-    for (var i = 0, submodel; submodel = submodels[i]; i++) {
-      submodel.traverse.apply(submodel, arguments);
-    }
+    var args = arguments;
+    submodels.forEach(function (submodel) {
+      submodel.traverse.apply(submodel, args);
+    });
 
     // post-call
     if (isMethodApplicable) {
@@ -95,56 +100,6 @@ define(function(require) {
 
   Model.prototype.getSubmodels = function() {
     return [];
-  };
-
-  Model.prototype.dispatchEvent = function(type, event) {
-    this.runListeners(type, event);
-  };
-
-  Model.prototype.runListeners = function(type, event) {
-    var listeners = this._listeners[type] || [],
-        newListeners = [];
-
-    event.type = type;
-    event.target = this;
-    listeners.forEach(function onCallback(pair) {
-      var callback = pair[0];
-      var once = pair[1];
-      callback(event);
-      if (!once) { newListeners.push(pair); }
-    });
-    this._listeners[type] = newListeners;
-  };
-
-  Model.prototype.addEventListener = function(type, callback, once) {
-    var listeners = this._listeners,
-        typeListeners = listeners[type] = (listeners[type] || []);
-
-    if (!typeListeners.some(alreadyListening)) {
-      typeListeners.push([callback, once]);
-    }
-
-    function alreadyListening(pair) {
-      return pair[0] === callback;
-    };
-  };
-
-  Model.prototype.removeEventListener = function(type, callback) {
-    var listeners = this._listeners,
-        typeListeners = listeners[type] = listeners[type] || [],
-        position = -1;
-
-    for (var l = 0, pair; (pair = typeListeners[l]) && position < 0; l++) {
-      if (pair[0] === callback) { position = l; }
-    }
-
-    if (position !== -1) {
-      listeners[type].splice(position, 1);
-    }
-  };
-
-  Model.prototype.removeAllEventListener = function (type) {
-    this._listeners[type] = [];
   };
 
   return Model;
